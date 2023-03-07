@@ -25,13 +25,15 @@ class DataSourceSyncScheduler(HourlyScheduler):
     def _create_metadata(self):
         self._metadata = {
             'token': self._token,
+            'user_id': 'root_api_key',
             'service': 'cost_analysis',
             'resource': 'Job',
             'verb': 'create_jobs_by_data_source'
         }
 
     def create_task(self):
-        if datetime.utcnow().hour == self._data_source_sync_hour:
+        # if datetime.utcnow().hour == self._data_source_sync_hour:
+        if True:
             stp = {
                 'name': 'data_source_sync_schedule',
                 'version': 'v1',
@@ -42,7 +44,9 @@ class DataSourceSyncScheduler(HourlyScheduler):
                     'metadata': self._metadata,
                     'method': 'create_jobs_by_data_source',
                     'params': {
-                        'params': {}
+                        'params': {
+                            'user_id': 'root_api_key'
+                        }
                     }
                 }]
             }
