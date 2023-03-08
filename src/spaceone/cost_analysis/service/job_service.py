@@ -184,6 +184,9 @@ class JobService(BaseService):
                 endpoint, updated_version = self.ds_plugin_mgr.get_data_source_plugin_endpoint(plugin_info, domain_id)
 
                 secret_data = self._get_secret_data(secret_id, domain_id)
+                if 'database' not in task_options or task_options['database'] == '':
+                    secret_id = self._get_secret_id(task_options['service_account_id'], domain_id)
+                    secret_data.update(self._get_secret_data(secret_id, domain_id))
 
                 self.ds_plugin_mgr.initialize(endpoint)
                 start_dt = datetime.utcnow()
@@ -217,6 +220,18 @@ class JobService(BaseService):
                 self.job_task_mgr.change_error_status(job_task_vo, e)
 
         self._close_job(job_id, domain_id)
+
+    def _get_secret_id(self, service_account_id, domain_id):
+        if service_account_id is None:
+            return None
+        else:
+            secret_mgr: SecretManager = self.locator.get_manager('SecretManager')
+            secret_vos = secret_mgr.list_secrets({
+                'filter': [
+                    {'k': 'service_account_id', 'v': service_account_id, 'o': 'eq'}
+                ]
+            }, domain_id)
+            return secret_vos['results'][0]['secret_id'] if len(secret_vos['results']) > 0 else None
 
     def _get_secret_data(self, secret_id, domain_id):
         secret_mgr: SecretManager = self.locator.get_manager('SecretManager')
