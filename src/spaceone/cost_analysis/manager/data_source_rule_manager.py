@@ -105,6 +105,10 @@ class DataSourceRuleManager(BaseManager):
                         cost_data['service_account_id'] = service_account_info['service_account_id']
                         cost_data['project_id'] = service_account_info.get('project_info', {}).get('project_id')
 
+            elif action == 'delete_additional_info':
+                cost_data['additional_info'] = cost_data.get('additional_info', {})
+                [cost_data['additional_info'].pop(key) for key in value['keys']]
+
             if action == 'add_additional_info':
                 cost_data['additional_info'] = cost_data.get('additional_info', {})
                 cost_data['additional_info'].update(value)
