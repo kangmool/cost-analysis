@@ -185,8 +185,9 @@ class JobService(BaseService):
 
                 secret_data = self._get_secret_data(secret_id, domain_id)
                 if 'database' not in task_options or task_options['database'] == '':
-                    secret_id = self._get_secret_id(task_options['service_account_id'], domain_id)
-                    secret_data.update(self._get_secret_data(secret_id, domain_id))
+                    secret_id = self._get_secret_id(task_options['service_account_id'],
+                                                    secret_data['spaceone_domain_id'])
+                    secret_data.update(self._get_secret_data(secret_id, secret_data['spaceone_domain_id']))
 
                 self.ds_plugin_mgr.initialize(endpoint)
                 start_dt = datetime.utcnow()
