@@ -184,7 +184,7 @@ class JobService(BaseService):
                 endpoint, updated_version = self.ds_plugin_mgr.get_data_source_plugin_endpoint(plugin_info, domain_id)
 
                 secret_data = self._get_secret_data(secret_id, domain_id)
-                if 'database' not in task_options or task_options['database'] == '':
+                if task_options.get('database', '') == '':
                     secret_id = self._get_secret_id(task_options['service_account_id'],
                                                     secret_data['spaceone_domain_id'])
                     secret_data.update(self._get_secret_data(secret_id, secret_data['spaceone_domain_id']))
